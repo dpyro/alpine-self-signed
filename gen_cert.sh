@@ -19,10 +19,10 @@ export SSL_EXPIRE=${SSL_EXPIRE:-"7"}
 export SSL_KEY=${SSL_KEY:-"key.pem"}
 export SSL_SIZE=${SSL_SIZE:-"4096"}
 
-echo "CA Key"
+echo "CA Key > $CA_KEY"
 openssl genrsa -out "$CA_KEY" "$SSL_SIZE"
-echo "CA Cert"
-openssl req -x509 -new -nodes -key "$CA_KEY" -days "$CA_EXPIRE_DAYS" -subj "/CN=$CA_SUBJECT" > "$CA_CERT"
+echo "CA Cert > $CA_CERT"
+openssl req -x509 -new -nodes -key "$CA_KEY" -days "$CA_EXPIRE" -subj "/CN=$CA_SUBJECT" > "$CA_CERT"
 
 cat > "$SSL_CONFIG" <<-EOM
 	[req]
@@ -50,13 +50,13 @@ if [ -n "$SSL_IP" ]; then
 	cat "IP = $SSL_IP" >> "$SSL_CONFIG"
 fi
 
-echo "Generating SSL Key"
+echo "Generating SSL Key > $SSL_KEY"
 openssl genrsa -out "$SSL_KEY" "$SSL_SIZE"
 
-echo "Generating SSL CSR"
+echo "Generating SSL CSR > $SSL_CSR"
 openssl req -new -key "$SSL_KEY" -subj "/CN=$SSL_SUBJECT" < "$SSL_CONFIG" > "$SSL_CSR" 
 
-echo "Generating SSL Cert"
+echo "Generating SSL Cert > $SSL_CERT"
 openssl x509 -req -in "$SSL_CSR" -CA "$CA_CERT" -CAkey "$CA_KEY" -CAcreateserial -out "$SSL_CERT" \
 	-days "$SSL_EXPIRE" -extensions v3_req -extfile "$SSL_CONFIG"
 

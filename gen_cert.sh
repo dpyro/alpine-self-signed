@@ -60,6 +60,9 @@ echo "Generating SSL Cert > $SSL_CERT"
 openssl x509 -req -in "$SSL_CSR" -CA "$CA_CERT" -CAkey "$CA_KEY" -CAcreateserial -out "$SSL_CERT" \
 	-days "$SSL_EXPIRE" -extensions v3_req -extfile "$SSL_CONFIG"
 
+echo "Generation folder contains:"
+ls
+
 echo "YAML Result:"
 echo "---"
 echo "ca_key: |"
